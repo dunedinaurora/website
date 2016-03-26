@@ -1,0 +1,2 @@
+# Exclude the connect.inc.php file
+*connect.inc.php
