@@ -37,11 +37,14 @@
 	// UDF to to display search results
 	// ********************************
 	
-	function displayResults($connection, $startdate, $enddate, $readingtype)
+	function displayResults($connection, $startdate, $enddate, $readingtype, $outputfiles)
 	{
 		// Open the text file for writing
-		$csvfile = fopen("results.csv", "w") or die("Unable to open CSV file!");
-		$jsonfile = fopen("results.json", "w") or die("Unable to open JSON file!");
+		$csvf = $outputfiles."/results.csv";
+		$jsonf = $outputfiles."/results.json";
+
+		$csvfile = fopen($csvf, "w") or die("Unable to open CSV file!");
+		$jsonfile = fopen($jsonf, "w") or die("Unable to open JSON file!");
 		
 		$selectQuery="select * from $readingtype where $readingtype.timestamp between \"$startdate 00:00:00\" and \"$enddate 00:00:00\"";
 		
@@ -62,12 +65,12 @@
 			// *****************
 			if ($readingtype == "DataF")
 			{
-				//G857 header
+				//G857
 				fwrite($csvfile, "Datetime (UTC), Full Field Reading (nT)"."\r\n");
 			}
 			else
 			{
-				//SAM header
+				//SAM
 				fwrite($csvfile, "Datetime (UTC), X axis (nT),Y axis (nT),Z axis (nT),"."\r\n");
 			}
 			
@@ -76,13 +79,13 @@
 			{
 				if ($readingtype == "DataF")
 				{
-					//G857 data
+					//G857
 					$data = $row['timestamp'].",".$row['dataF']."\r\n";
 					fwrite($csvfile, $data);
 				}
 				else
 				{
-					//SAM data
+					//SAM
 					$data = $row['timestamp'].",".$row['dataX'].",".$row['dataY'].",".$row['dataZ']."\r\n";
 					fwrite($csvfile, $data);
 				}
@@ -146,7 +149,7 @@
 			fwrite($jsonfile,"]}");
 						
 			// CReate download buttons.
-			echo("<p>Download your data as <a class=\"btn btn-success\" href=\"results.csv\" role=\"button\">CSV</a> or <a class=\"btn btn-success\" href=\"results.json\" role=\"button\">JSON</a>");
+			echo("<p>Download your data as <a class=\"btn btn-success\" href=\"$outputfiles/results.csv\" role=\"button\">CSV</a> or <a class=\"btn btn-success\" href=\"$outputfiles/results.json\" role=\"button\">JSON</a>");
 		}
 
 		fclose($jsonfile);					

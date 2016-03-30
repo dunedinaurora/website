@@ -77,6 +77,15 @@ include 'searchfunctions.inc.php';
 			<?php
 			$startdate = "yyyy-mm-dd";
 			$enddate = "yyyy-mm-dd";
+
+			// Set up the output file folder
+			$filedir = "outputfiles";
+			 if ( !file_exists($filedir) ) {
+     			$oldmask = umask(0);  // helpful when used in linux server  
+    			mkdir ($filedir, 0750);
+    			umask($oldmask);
+ 				}
+ 				
 			
 			// *********************
 			// process button click
@@ -93,7 +102,7 @@ include 'searchfunctions.inc.php';
 				
 				// Run the search query and display the results
 				displaySearch($connection, $startdate, $enddate);
-				displayResults($connection, $startdate, $enddate, $readingtype);
+				displayResults($connection, $startdate, $enddate, $readingtype, $filedir);
 			}
 			else
 			{
