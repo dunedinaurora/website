@@ -143,6 +143,43 @@
 			
 			// CReate download buttons.
 			echo("<br><p>Download your data as <a class=\"btn btn-success\" href=\"$outputfiles/results.csv\" role=\"button\">CSV</a> or <a class=\"btn btn-success\" href=\"$outputfiles/results.json\" role=\"button\">JSON</a>");
+			
+			// create help on data formats
+			echo("
+					<!-- Trigger the modal with a button -->
+					<button type=\"button\" class=\"btn btn-info\" data-toggle=\"modal\" data-target=\"#myModal1\"><span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span></button>
+
+
+					<!-- Modal -->
+					<div id=\"myModal1\" class=\"modal fade\" role=\"dialog\">
+					  <div class=\"modal-dialog\">
+  						<!-- Modal content-->
+  						<div class=\"modal-content\">
+  						  <div class=\"modal-header\">
+    							<button type=\"button\" class=\"close\" data-dismiss=\"modal\">&times;</button>
+    							<h4 class=\"modal-title\">CSV and JSON data</h4>
+  						  </div>
+  						  <div class=\"modal-body\">
+    							<p>Data from the website is provided in two formats: Comma Separated Values (CSV) and JavaScript Object Notation (JSON - pronounced \"Jason\")</p>
+								<p>Both of these formats are plain text files, with the data laid out in a particular way.</p>
+								<p>CSV files are the simplest to use and can be imported into Excel. Our files have the date/time as the first item on the line, then a comma followed by the reading from the magnetometer. The very first line in the file describes what each item is.
+								<br><samp>
+								<br>Datetime (UTC), Full Field Reading (nT)
+								<br>2016-04-05 00:00:05,58824.40
+								<br>2016-04-05 00:00:15,58823.00
+								<br>2016-04-05 00:00:25,58815.00
+								<br>etc...
+								</samp>
+								<p>JSON files use a different format and are usually used by people writing their own software.</p>
+  						  </div>
+  						  <div class=\"modal-footer\">
+  							  <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>
+  						  </div>
+  						</div>
+					  </div>
+					</div>
+				</div>
+			");
 		}
 
 		fclose($jsonfile);	
