@@ -156,7 +156,7 @@ include 'searchfunctions.inc.php';
 			}
 
 			// Set up preview
-			echo("<div id=\"container\" style=\"width: 100%; height: 75%; margin: 0 auto\"></div>");
+			echo("<div id=\"container\" style=\"width: 100%; height: 400px; margin: 0 auto\"></div>");
 	?>
 		
             </div>

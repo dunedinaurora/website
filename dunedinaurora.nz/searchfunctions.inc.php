@@ -44,7 +44,7 @@
 		$result = mysqli_query($connection, $selectQuery);
 		
 
-		//echo("<br>".mysqli_num_rows($result)." rows of data retrieved<br>");
+		echo("<br>".mysqli_num_rows($result)." rows of data retrieved<br>");
 		
 		// Process returned data
 		if (mysqli_num_rows($result) == 0)
@@ -512,9 +512,38 @@ function drawgraph($resultfile)
 							{
 								text: 'Data Preview'
 							},
-							yAxis: {
-								
-							},
+							yAxis: [
+
+								{ // Primary yAxis
+										labels: {
+											enabled: false
+										},
+										title: {
+											text: null
+												}
+								}, 
+								{ // Secondary yAxis
+										labels: {
+											enabled: false
+											},
+										title: {
+											text: null
+												}
+								},
+								{ // 3rdry yAxis
+										labels: {
+											enabled: false
+											},
+										title: {
+											text: null
+												}
+								},
+							],
+							series:[
+								{yAxis: 0},
+								{yAxis: 1},
+								{yAxis: 2}
+							],
 							xAxis: 
 							{
 								tickInterval: 60,
