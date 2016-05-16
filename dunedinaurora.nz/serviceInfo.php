@@ -57,7 +57,8 @@ include 'menu.php'
 		
             <div class="col-md-5">
                 <h3>Project Helios Data Service</h3>
-                <p>Data for the last two hours (currently) is provided in CSV and JSON formats for everyone to use. </p>
+                <p>This menu gives you access to the raw data produced by our magnetometers. You can choose to grab the last two hours of data from the two quick links in the Data Service Menu, or you can open up our Search Page and use custom dates to create your own unique search.</p>
+				<p></p>
 				<p></p>
             </div>
 			
