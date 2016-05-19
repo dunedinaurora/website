@@ -78,6 +78,9 @@ include 'searchfunctions.inc.php';
 			<?php
 			$startdate = "yyyy-mm-dd";
 			$enddate = "yyyy-mm-dd";
+			$randombit = rand(1,99999);
+			$displayfile = "data".$randombit;
+
 
 			// Set up the output file folder
 			$filedir = "outputfiles";
@@ -86,7 +89,6 @@ include 'searchfunctions.inc.php';
     			mkdir ($filedir, 0750);
     			umask($oldmask);
  				}
- 				
 			
 			// *********************
 			// process button click
@@ -103,7 +105,7 @@ include 'searchfunctions.inc.php';
 				
 				// Run the search query and display the results
 				displaySearch($connection, $startdate, $enddate);
-				displayResults($connection, $startdate, $enddate, $readingtype, $filedir);
+				displayResults($connection, $startdate, $enddate, $readingtype, $filedir, $displayfile);
 			}
 			elseif(isset($_POST['reset']))
 			{
