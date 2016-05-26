@@ -31,228 +31,247 @@
 	
 	function displayResults($connection, $startdate, $enddate, $readingtype, $filedir, $displayfile)
 	{
-		// Open the text file for writing
-		$csvf = $filedir."/".$displayfile.".csv";
-		$jsonf = $filedir."/".$displayfile.".json";
+		// THe limit in days for a search. Optimise based on server perfomance and user experience
+		$datedifflimit = 20;
 		
-		$csvfile = fopen($csvf, "w") or die("Unable to open CSV file!");
-		$jsonfile = fopen($jsonf, "w") or die("Unable to open JSON file!");
+		// Calculate the diffrences
+		$date1 = date_create($startdate );
+		$date2 = date_create($enddate);
+		$diff = date_diff($date1,$date2);
+	
+		// Format the dat as an integer
+		$diff = $diff->format('%a');
 		
-		// Create the SQL query
-		$selectQuery="select * from $readingtype where $readingtype.timestamp between \"$startdate 00:00:00\" and \"$enddate 00:00:00\"";
-		
-		$result = mysqli_query($connection, $selectQuery);
-		
-
-		echo("<br>".mysqli_num_rows($result)." rows of data retrieved<br>");
-		
-		// Process returned data
-		if (mysqli_num_rows($result) == 0)
+		// IF the search dates are over the limit...
+		if ($diff > $datedifflimit)
 		{
-			// No data returned
-			echo("<br>No data recorded for dates specified.");
+			echo("<br>The dates you have provided exceed the limit of <b>".$datedifflimit." days</b>. Please change your search dates");
 		}
 		else
 		{
-			// *****************
-			// CSV FILE WRITEOUT
-			// *****************
-			
-			// Write the file headers
-			if ($readingtype == "DataF")
-			{
-				//G857
-				fwrite($csvfile, "Datetime (UTC), Full Field Reading (nT)"."\r\n");
+				// Open the text file for writing
+				$csvf = $filedir."/".$displayfile.".csv";
+				$jsonf = $filedir."/".$displayfile.".json";
+				
+				$csvfile = fopen($csvf, "w") or die("Unable to open CSV file!");
+				$jsonfile = fopen($jsonf, "w") or die("Unable to open JSON file!");
+				
+				// Create the SQL query
+				$selectQuery="select * from $readingtype where $readingtype.timestamp between \"$startdate 00:00:00\" and \"$enddate 00:00:00\"";
+				
+				$result = mysqli_query($connection, $selectQuery);
+				
+
+				echo("<br>".mysqli_num_rows($result)." rows of data retrieved<br>");
+				
+				// Process returned data
+				if (mysqli_num_rows($result) == 0)
+				{
+					// No data returned
+					echo("<br>No data recorded for dates specified.");
+				}
+				else
+				{
+					// *****************
+					// CSV FILE WRITEOUT
+					// *****************
+					
+					// Write the file headers
+					if ($readingtype == "DataF")
+					{
+						//G857
+						fwrite($csvfile, "Datetime (UTC), Full Field Reading (nT)"."\r\n");
+					}
+					else
+					{
+						//SAM
+						fwrite($csvfile, "Datetime (UTC), X axis (nT),Y axis (nT),Z axis (nT),"."\r\n");
+					}
+					
+					// now write the file contents
+					while ($row = mysqli_fetch_assoc($result))
+					{
+						if ($readingtype == "DataF")
+						{
+							//G857
+							$data = $row['timestamp'].",".$row['dataF']."\r\n";
+							fwrite($csvfile, $data);
+						}
+						else
+						{
+							//SAM
+							$data = $row['timestamp'].",".$row['dataX'].",".$row['dataY'].",".$row['dataZ']."\r\n";
+							fwrite($csvfile, $data);
+						}
+					}
+
+					// CLOSE the CSV file
+					fclose($csvfile);
+					
+					// ******************
+					// JSON FILE WRITEOUT
+					// ******************
+					fwrite($jsonfile,'{"Data":[');
+					
+					// Reset the row pointer back to the start of my results
+					mysqli_data_seek($result, 0);
+					
+					// How many rows are we getting back?
+					$numberOfRows = mysqli_num_rows($result);
+										
+					$counter = 0;
+
+					// Dont forget to remove the trailing comma from the last key:value pair
+					while ($row = mysqli_fetch_array($result)) 
+					{	
+						$counter++;
+						$timeNX =  (string)($row['timestamp']);
+
+						if($counter == $numberOfRows)
+						{
+							//echo("Last Row");
+							if ($readingtype == "DataF")
+							{
+								//G857
+								fwrite($jsonfile,'{"Time UTC":"'.$timeNX.'","Full Field Reading nT":'.$row['dataF'].'}');
+							}
+							else
+							{
+								//SAM
+								fwrite($jsonfile, '{"Time UTC":"'.$timeNX.'",'.'"X (nT)":'.$row['dataX'].','.'"Y (nT)":'.$row['dataY'].','.'"Z (nT)":'.$row['dataZ'].'}');
+							}
+							
+						}
+						else
+						{
+							if ($readingtype == "DataF")
+							{
+								//G857
+								fwrite($jsonfile,'{"Time UTC":"'.$timeNX.'","Full Field Reading nT":'.$row['dataF'].'},');
+							}
+							else
+							{
+								//SAM
+								fwrite($jsonfile, '{"Time UTC":"'.$timeNX.'",'.'"X (nT)":'.$row['dataX'].','.'"Y (nT)":'.$row['dataY'].','.'"Z (nT)":'.$row['dataZ'].'},');
+							}
+						}
+					}
+					// CLOSE the JSON file
+					fwrite($jsonfile,"]}");
+					
+					// CReate download buttons.
+					echo("<br><p>Download your data as <a class=\"btn btn-success\" href=\"$csvf\" role=\"button\">CSV</a> or <a class=\"btn btn-success\" href=\"$jsonf\" role=\"button\">JSON</a>");
+					
+					// create help on data formats
+					echo("
+							<!-- Trigger the modal with a button -->
+							<button type=\"button\" class=\"btn btn-info\" data-toggle=\"modal\" data-target=\"#myModal1\"><span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span></button>
+
+
+							<!-- Modal -->
+							<div id=\"myModal1\" class=\"modal fade\" role=\"dialog\">
+							  <div class=\"modal-dialog\">
+								<!-- Modal content-->
+								<div class=\"modal-content\">
+								  <div class=\"modal-header\">
+										<button type=\"button\" class=\"close\" data-dismiss=\"modal\">&times;</button>
+										<h4 class=\"modal-title\">CSV and JSON data</h4>
+								  </div>
+								  <div class=\"modal-body\">
+										<p>Data from the website is provided in two formats: Comma Separated Values (CSV) and JavaScript Object Notation (JSON - pronounced \"Jason\")</p>
+										<p>Both of these formats are plain text files, with the data laid out in a particular way.</p>
+										<p>CSV files are the simplest to use and can be imported into Excel. Our files have the date/time as the first item on the line, then a comma followed by the reading from the magnetometer. The very first line in the file describes what each item is.
+										<br><samp>
+										<br>Datetime (UTC), Full Field Reading (nT)
+										<br>2016-04-05 00:00:05,58824.40
+										<br>2016-04-05 00:00:15,58823.00
+										<br>2016-04-05 00:00:25,58815.00
+										<br>etc...
+										</samp>
+										<p>JSON files use a different format and are usually used by people writing their own software.</p>
+								  </div>
+								  <div class=\"modal-footer\">
+									  <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>
+								  </div>
+								</div>
+							  </div>
+							</div>
+						</div>
+					");
 			}
-			else
-			{
-				//SAM
-				fwrite($csvfile, "Datetime (UTC), X axis (nT),Y axis (nT),Z axis (nT),"."\r\n");
+
+			fclose($jsonfile);	
+
+			// ******************************************************
+			// CREATE DISPLAY FILE FOR GRAPH
+			// Because of the extreme overhead on highcharts when charting
+			// enourmous datasets, we will create a reduced file of 
+			// approx 1000 datapoints for display purposes
+			// ******************************************************
+			$maxdisplay = 1000; // we can tune this for performance on Highcharts
+			$i = 0; // to test if we've gotten to every ith row
+			//$j = 0; // to report how many rows we ended up with
+
+			// Reset the row pointer back to the start of my results
+			mysqli_data_seek($result, 0);
+
+			// if our query has returned less than 1000 rows (SO should be quick to display)
+			if (mysqli_num_rows($result) < $maxdisplay)
+			{	
+				drawgraph('outputfiles/results.csv');
 			}
-			
-			// now write the file contents
-			while ($row = mysqli_fetch_assoc($result))
+			else //average down the query to however many rows and write out to reduced display CSV
 			{
+				//OPen new CSV for reduced files
+				$reducedfile = fopen('outputfiles/reduced.csv', "w") or die("Unable to open CSV file!");
+				
+				//We're going to skip over our array until we get to the end. We use the array size div by out threshold
+				$parseinterval = floor(mysqli_num_rows($result) / $maxdisplay);
+				// echo("<p>Plotting every $parseinterval<sup>th</sup> datapoint...");
+
+				// set up CSV file header
 				if ($readingtype == "DataF")
 				{
 					//G857
-					$data = $row['timestamp'].",".$row['dataF']."\r\n";
-					fwrite($csvfile, $data);
+					fwrite($reducedfile, "Datetime (UTC), Full Field Reading (nT)"."\r\n");
 				}
 				else
 				{
 					//SAM
-					$data = $row['timestamp'].",".$row['dataX'].",".$row['dataY'].",".$row['dataZ']."\r\n";
-					fwrite($csvfile, $data);
+					fwrite($reducedfile, "Datetime (UTC), X axis (nT),Y axis (nT),Z axis (nT),"."\r\n");
 				}
-			}
 
-			// CLOSE the CSV file
-			fclose($csvfile);
-			
-			// ******************
-			// JSON FILE WRITEOUT
-			// ******************
-			fwrite($jsonfile,'{"Data":[');
-			
-			// Reset the row pointer back to the start of my results
-			mysqli_data_seek($result, 0);
-			
-			// How many rows are we getting back?
-			$numberOfRows = mysqli_num_rows($result);
-								
-			$counter = 0;
-
-			// Dont forget to remove the trailing comma from the last key:value pair
-			while ($row = mysqli_fetch_array($result)) 
-			{	
-				$counter++;
-				$timeNX =  (string)($row['timestamp']);
-
-				if($counter == $numberOfRows)
+				// Create the CSV file body
+				while ($row = mysqli_fetch_array($result)) 
 				{
-					//echo("Last Row");
-					if ($readingtype == "DataF")
+					$i++;
+					if ($i%$parseinterval == 0) //MOD div, are we at ith row yet?
 					{
-						//G857
-						fwrite($jsonfile,'{"Time UTC":"'.$timeNX.'","Full Field Reading nT":'.$row['dataF'].'}');
-					}
-					else
-					{
-						//SAM
-						fwrite($jsonfile, '{"Time UTC":"'.$timeNX.'",'.'"X (nT)":'.$row['dataX'].','.'"Y (nT)":'.$row['dataY'].','.'"Z (nT)":'.$row['dataZ'].'}');
-					}
-					
-				}
-				else
-				{
-					if ($readingtype == "DataF")
-					{
-						//G857
-						fwrite($jsonfile,'{"Time UTC":"'.$timeNX.'","Full Field Reading nT":'.$row['dataF'].'},');
-					}
-					else
-					{
-						//SAM
-						fwrite($jsonfile, '{"Time UTC":"'.$timeNX.'",'.'"X (nT)":'.$row['dataX'].','.'"Y (nT)":'.$row['dataY'].','.'"Z (nT)":'.$row['dataZ'].'},');
+						if ($readingtype == "DataF")
+						{
+							//G857
+							$data = $row['timestamp'].",".$row['dataF']."\r\n";
+							fwrite($reducedfile, $data);
+							//$j++;
+						}
+						else
+						{
+							//SAM
+							$data = $row['timestamp'].",".$row['dataX'].",".$row['dataY'].",".$row['dataZ']."\r\n";
+							fwrite($reducedfile, $data);
+							//$j++;
+						}
 					}
 				}
+
+				// CLOSE the CSV file
+				fclose($reducedfile);
+
+				// echo("<p>Reduced file is $j records");
+
+				// call the graphing function on the reduced file	
+				drawgraph('outputfiles/reduced.csv');
 			}
-			// CLOSE the JSON file
-			fwrite($jsonfile,"]}");
-			
-			// CReate download buttons.
-			echo("<br><p>Download your data as <a class=\"btn btn-success\" href=\"$csvf\" role=\"button\">CSV</a> or <a class=\"btn btn-success\" href=\"$jsonf\" role=\"button\">JSON</a>");
-			
-			// create help on data formats
-			echo("
-					<!-- Trigger the modal with a button -->
-					<button type=\"button\" class=\"btn btn-info\" data-toggle=\"modal\" data-target=\"#myModal1\"><span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span></button>
-
-
-					<!-- Modal -->
-					<div id=\"myModal1\" class=\"modal fade\" role=\"dialog\">
-					  <div class=\"modal-dialog\">
-  						<!-- Modal content-->
-  						<div class=\"modal-content\">
-  						  <div class=\"modal-header\">
-    							<button type=\"button\" class=\"close\" data-dismiss=\"modal\">&times;</button>
-    							<h4 class=\"modal-title\">CSV and JSON data</h4>
-  						  </div>
-  						  <div class=\"modal-body\">
-    							<p>Data from the website is provided in two formats: Comma Separated Values (CSV) and JavaScript Object Notation (JSON - pronounced \"Jason\")</p>
-								<p>Both of these formats are plain text files, with the data laid out in a particular way.</p>
-								<p>CSV files are the simplest to use and can be imported into Excel. Our files have the date/time as the first item on the line, then a comma followed by the reading from the magnetometer. The very first line in the file describes what each item is.
-								<br><samp>
-								<br>Datetime (UTC), Full Field Reading (nT)
-								<br>2016-04-05 00:00:05,58824.40
-								<br>2016-04-05 00:00:15,58823.00
-								<br>2016-04-05 00:00:25,58815.00
-								<br>etc...
-								</samp>
-								<p>JSON files use a different format and are usually used by people writing their own software.</p>
-  						  </div>
-  						  <div class=\"modal-footer\">
-  							  <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>
-  						  </div>
-  						</div>
-					  </div>
-					</div>
-				</div>
-			");
-		}
-
-		fclose($jsonfile);	
-
-		// ******************************************************
-		// CREATE DISPLAY FILE FOR GRAPH
-		// Because of the extreme overhead on highcharts when charting
-		// enourmous datasets, we will create a reduced file of 
-		// approx 1000 datapoints for display purposes
-		// ******************************************************
-		$maxdisplay = 1000; // we can tune this for performance on Highcharts
-		$i = 0; // to test if we've gotten to every ith row
-		//$j = 0; // to report how many rows we ended up with
-
-		// Reset the row pointer back to the start of my results
-		mysqli_data_seek($result, 0);
-
-		// if our query has returned less than 1000 rows (SO should be quick to display)
-		if (mysqli_num_rows($result) < $maxdisplay)
-		{	
-			drawgraph('outputfiles/results.csv');
-		}
-		else //average down the query to however many rows and write out to reduced display CSV
-		{
-			//OPen new CSV for reduced files
-			$reducedfile = fopen('outputfiles/reduced.csv', "w") or die("Unable to open CSV file!");
-			
-			//We're going to skip over our array until we get to the end. We use the array size div by out threshold
-			$parseinterval = floor(mysqli_num_rows($result) / $maxdisplay);
-			// echo("<p>Plotting every $parseinterval<sup>th</sup> datapoint...");
-
-			// set up CSV file header
-			if ($readingtype == "DataF")
-			{
-				//G857
-				fwrite($reducedfile, "Datetime (UTC), Full Field Reading (nT)"."\r\n");
-			}
-			else
-			{
-				//SAM
-				fwrite($reducedfile, "Datetime (UTC), X axis (nT),Y axis (nT),Z axis (nT),"."\r\n");
-			}
-
-			// Create the CSV file body
-			while ($row = mysqli_fetch_array($result)) 
-			{
-				$i++;
-				if ($i%$parseinterval == 0) //MOD div, are we at ith row yet?
-				{
-					if ($readingtype == "DataF")
-					{
-						//G857
-						$data = $row['timestamp'].",".$row['dataF']."\r\n";
-						fwrite($reducedfile, $data);
-						//$j++;
-					}
-					else
-					{
-						//SAM
-						$data = $row['timestamp'].",".$row['dataX'].",".$row['dataY'].",".$row['dataZ']."\r\n";
-						fwrite($reducedfile, $data);
-						//$j++;
-					}
-				}
-			}
-
-			// CLOSE the CSV file
-			fclose($reducedfile);
-
-			// echo("<p>Reduced file is $j records");
-
-			// call the graphing function on the reduced file	
-			drawgraph('outputfiles/reduced.csv');
 		}
 	}
 

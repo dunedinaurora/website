@@ -78,11 +78,16 @@ include 'searchfunctions.inc.php';
 			<?php
 			$startdate = "yyyy-mm-dd";
 			$enddate = "yyyy-mm-dd";
+			
+			// Create a file with a randomised component in it's name. There is a possiblity that simultanious
+			// searches will otherwise overwrite the file. 
 			$randombit = rand(1,99999);
-			$displayfile = "data".$randombit;
+			$displayfile = "Results".$randombit;
 
 
 			// Set up the output file folder
+			// NOTE there is a problem with this, we must manually create the output folder on the server
+			// But this should work. Why doesn't it? *siiigh*
 			$filedir = "outputfiles";
 			 if ( !file_exists($filedir) ) {
      			$oldmask = umask(0);  // helpful when used in linux server  
@@ -143,6 +148,7 @@ include 'searchfunctions.inc.php';
 					<input type=\"date\" id=\"magstart\" name=\"magstart\" value=\"$startdate\" min=\"2015-04-01\">			  
 					&nbsp to &nbsp
 					<input type=\"date\" id=\"magend\" name=\"magend\" value=\"$enddate\"></p>
+					<p>Maximum search size is currently <b>20 days</b>.
 				");
 				
 				
