@@ -7,7 +7,8 @@ $queryIntervalMinutes = 120;
 
 // filetype is needed otherwise the header will not attach and break your output
 $fileType = "JSON";
-
+header('Content-Type: application/json');
+header('Content-Disposition: attachment; filename=DunedinAurora.json');
 echo('{');
 
 include 'ServicesHEADER.php';
