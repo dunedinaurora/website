@@ -13,12 +13,12 @@ $resultG857 = mysqli_query($connection, $selectQuery);
 
 include 'ServicesHEADER.php';
 
-echo("Datetime (UTC), Full Field Reading (nT)"."<br>");
+echo("Datetime (UTC), Full Field Reading (nT)"."\r\n");
 
 while ($row = mysqli_fetch_array($resultG857)) 
 {	
 	$timeNX =  (string)($row['timestamp']);
-	echo($timeNX.",".$row['dataF']."<br>");
+	echo($timeNX.",".$row["dataF"]."\r\n");
 }
 
 //echo("}")
