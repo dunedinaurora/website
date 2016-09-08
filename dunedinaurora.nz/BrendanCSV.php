@@ -12,16 +12,20 @@ $selectQuery = "SELECT * FROM DataF WHERE DataF.timestamp > DATE_SUB(NOW(), INTE
 $resultG857 = mysqli_query($connection, $selectQuery);
 
 //include 'ServicesHEADER.php';
-header("Content-Type: text/plain");
-echo("Datetime (UTC), Full Field Reading (nT)"."\r\n");
+header('Content-Type: text/csv; charset=utf-8');
+header('Content-Disposition: attachment; filename=BrendanCSV.csv');
+
+// create a file pointer connected to the output stream
+$output = fopen('php://output', 'w');
+
+// output the column headings
+fputcsv($output, array('Datetime (UTC)', 'Full Field Reading (nT)'));
 
 while ($row = mysqli_fetch_array($resultG857)) 
 {	
-	$timeNX =  (string)($row['timestamp']);
-	echo($timeNX.",".$row["dataF"]."\r\n");
+	$timeNX = (string)($row['timestamp']);
+	$result = array($timeNX,$row["dataF"]);
+	fputcsv($output, $result);
 }
-
-//echo("}")
-//echo json_encode($dataF);
 
 ?>
