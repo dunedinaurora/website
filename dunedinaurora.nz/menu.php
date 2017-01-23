@@ -25,11 +25,12 @@
 							<li class="dropdown">
 							  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Graphs <span class="caret"></span></a>
 							  <ul class="dropdown-menu">
-								<li><a href="graph.php">Combined Graph</a></li>
-								<li><a href="detailSAM.php">3-Axis Magnetometer</a></li>
+								<!-- <li><a href="graph.php">Combined Graph</a></li> -->
+								<!-- <li><a href="detailSAM.php">3-Axis Magnetometer</a></li> -->
 								<li><a href="detailG857.php">Full Field Magnetometer</a></li>
+								<li><a href="G857zoomable.php">Zoomable Full Field Magnetometer</a></li>
 								<li role="separator" class="divider"></li>
-								<li><a href="#">Rate of Change Graph (Coming soon)</a></li>
+								<!-- <li><a href="#">Rate of Change Graph (Coming soon)</a></li> -->
 							  </ul>
 							</li>
 							
@@ -40,7 +41,7 @@
 								<li><a href="ServiceCSV.php">2 Hour CSV, Full Field</a></li>
 								<li><a href="ServiceJSON.php">2 Hour JSON, Full Field</a></li>
 								<li role="separator" class="divider"></li>
-								<li><a href="#">Database Search Form (Coming soon)</a></li>
+								<li><a href="search.php">Database Search Form</a></li>
 							  </ul>
 							</li>
 							
