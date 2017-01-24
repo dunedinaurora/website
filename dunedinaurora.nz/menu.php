@@ -49,7 +49,7 @@
 							  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Live Sky Cameras<span class="caret"></span></a>
 							  <ul class="dropdown-menu">
 								<li><a href="#">Skycam 1 - </a></li>
-								<li><a href="#">Skycam 2 - Dunedin North</a></li>
+								<li><a href="skycam2.php">Skycam 2 - Dunedin North</a></li>
 							  </ul>
 							</li>
 							

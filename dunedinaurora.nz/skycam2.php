@@ -44,9 +44,7 @@ include 'menu.php'
         <!-- /.row -->
 
         <!-- Portfolio Item Row -->
-        <div class="row">
-                <p>Skycam 2 is located in suburban Dunedin, New Zealand. It faces south and lower edge of the field of view is approx 24 deg above the horizon to miss the glare from neighbors and the city lights. This is experimental, and may break without warning ;-)</p>
-				
+        <div class="row">		
 					<div style="border-style: solid; 
 								border-radius: 3px;
 								border-color: #707070;					
@@ -55,7 +53,8 @@ include 'menu.php'
 								margin: auto;">
 								<img id = "skycam2">
 					</div>
-				
+				<p>Skycam 2 is located in suburban Dunedin, New Zealand. It faces south and lower edge of the field of view is approx 24 deg above the horizon to miss the glare from neighbours and the city lights. This is experimental, and may break without warning ;-)</p>
+				<p>Specifications</p>
 				<ul>
 					<li>Hardware - ZWO Company, ASI 120 MC-S colour imaging camera fitted with a 4mm CCD camera lens</li>
 					<li>Software - <a href="http://www.sharpcap.co.uk/">SharpCap</a> imaging software with customised python scripts to manage the image capture and upload</li>
@@ -90,7 +89,7 @@ include 'menu.php'
 	function imgReload() {
 		var d = new Date();
 		var newImgURL = "http://188.166.235.64/downscaled.png#" + d.getTime();
-		document.getElementById('skycam2').innerHTML = '<img id = "skycam2" src = "' + newImgURL + '" style="display: block; margin-left: auto; margin-right: auto">';
+		document.getElementById('skycam2').innerHTML = '<img class="img-responsive" id = "skycam2" src = "' + newImgURL + '" style="display: block; margin-left: auto; margin-right: auto">';
 
 		// window.alert(document.getElementById('skycam2').innerHTML)
 		
