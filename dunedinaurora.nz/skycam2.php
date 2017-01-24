@@ -51,7 +51,7 @@ include 'menu.php'
 								padding: 3em;
 								background-color: #999999;
 								margin: auto;">
-								<img id = "skycam2">
+								<img class="img-responsive" id = "skycam2" src = "http://188.166.235.64/downscaled.png" style="display: block; margin-left: auto; margin-right: auto">
 					</div>
 				<p>Skycam 2 is located in suburban Dunedin, New Zealand. It faces south and lower edge of the field of view is approx 24 deg above the horizon to miss the glare from neighbours and the city lights. This is experimental, and may break without warning ;-)</p>
 				<p>Specifications</p>
@@ -89,15 +89,11 @@ include 'menu.php'
 	$(document).ready(function imgReload() {
 		var d = new Date();
 		var newImgURL = "http://188.166.235.64/downscaled.png#" + d.getTime();
-		var htmlfrag = '<img class="img-responsive" id = "skycam2" src = "' + newImgURL + '" style="display: block; margin-left: auto; margin-right: auto">';
-		document.getElementById('skycam2').innerHTML(htmlfrag);
-
-		// window.alert(document.getElementById('skycam2').innerHTML)
+		$("#skycam2").attr("src", newImgURL);
 		
 		setTimeout(function(){imgReload()}, 300000);
 	});
 	
-	imgReload();
 	</script>
 	
 </body>
