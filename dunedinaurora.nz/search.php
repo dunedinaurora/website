@@ -177,7 +177,7 @@ include 'searchfunctions.inc.php';
         <footer>
             <div class="row">
                 <div class="col-lg-12">
-                    <p>Copyright &copy; Project Helios 2016</p>
+                    <p>Copyright &copy; Project Helios 2017</p>
                 </div>
             </div>
             <!-- /.row -->
