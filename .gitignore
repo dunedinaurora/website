@@ -1,2 +1,3 @@
 # Exclude the connect.inc.php file
 *connect.inc.php
+/dunedinaurora.nz/DunedinAurora/nbproject/private/

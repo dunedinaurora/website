@@ -30,7 +30,7 @@
 								<li><a href="detailG857.php">Full Field Magnetometer</a></li>
 								<li><a href="G857zoomable.php">Zoomable Full Field Magnetometer</a></li>
 								<li role="separator" class="divider"></li>
-								<!-- <li><a href="#">Rate of Change Graph (Coming soon)</a></li> -->
+								<li><a href="spaceweather.php"></a>Space Weather</li>
 							  </ul>
 							</li>
 							
@@ -40,6 +40,8 @@
 								<li><a href="serviceInfo.php">User Information</a></li>
 								<li><a href="ServiceCSV.php">2 Hour CSV, Full Field</a></li>
 								<li><a href="ServiceJSON.php">2 Hour JSON, Full Field</a></li>
+								<li><a href="Service24CSV.php">24 Hour CSV, Full Field</a></li>
+								<li><a href="Service24JSON.php">24 Hour JSON, Full Field</a></li>
 								<li role="separator" class="divider"></li>
 								<li><a href="search.php">Database Search Form</a></li>
 							  </ul>

@@ -37,17 +37,17 @@ include 'menu.php'
 
         <!-- Portfolio Item Heading -->
         <div class="row">
-            <div class="col-lg-3">
-                <p>small col for updates
-            </div>
-			
-			 <div class="col-lg-9">
-                <p>large col for heatmaps
+            <div class="col-lg-12">
+                <h1 class="page-header">Site Help</h1>
             </div>
         </div>
         <!-- /.row -->
 
-        
+        <div class="row">
+                <h3>How do I...</h3>
+				<p></p>
+        </div>
+        <!-- /.row -->
 
         <!-- Footer -->
         <footer>
@@ -61,6 +61,12 @@ include 'menu.php'
 
     </div>
     <!-- /.container -->
+
+    <!-- jQuery -->
+    <script src="js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
 	
 	<!-- Google Analytics Script -->
 	<script type="text/javascript" src="js/googleanalyticsscript.js"></script>
